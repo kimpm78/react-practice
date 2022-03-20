@@ -2,23 +2,28 @@ import React, { useCallback, useState } from 'react';
 import Head from 'next/head';
 import { Checkbox, Form, Input, Button } from 'antd';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
 
-import AppLayout from '../components/Applayout';
+import AppLayout from '../components/AppLayout';
 import useInput from '../hooks/useInput';
+import { SIGN_UP_REQUEST } from '../reducers/user';
+
 
 const ErrorMassage = styled.div`
   color: red;
 `;
 
 const Signup = () => {
-  const [id, onChangeId] = useInput('');
+  const dispatch = useDispatch();
+  const { signUpLoading } = useSelector(state.user);
+  const [email, onChangeEmail] = useInput('');
   const [nickname, onChangeNickname] = useInput('');
   const [password, onChangePassword] = useInput('');
 
   const [passwordCheck, setPasswordCheck] = useState('');
   const [passwordError, setPasswordError] = useState(false);
   const onChangePasswordCheck = useCallback(
-    e => {
+    (e) => {
       setPasswordCheck(e.target.value);
       setPasswordError(e.target.value !== password);
     },
@@ -27,8 +32,8 @@ const Signup = () => {
 
   const [term, setTerm] = useState('');
   const [termError, setTermError] = useState(false);
-  const onChangeTerm = useCallback(e => {
-    setTerm(e.target.cheked);
+  const onChangeTerm = useCallback((e) => {
+    setTerm(e.target.check);
     setTermError(false);
   }, []);
 
@@ -39,8 +44,12 @@ const Signup = () => {
     if (!term) {
       return setTermError(true);
     }
-    console.log(id, nickname, password);
-  }, [password, passwordCheck, term]);
+    console.log(email, nickname, password);
+    dispatch({
+      type: SIGN_UP_REQUEST,
+      data: { email, password, nickname },
+    });
+  }, [email, password, passwordCheck, term]);
 
   return (
     <AppLayout>
@@ -49,12 +58,12 @@ const Signup = () => {
       </Head>
       <Form onFinish={onSubmit}>
         <div>
-          <label htmlFor="user-id">ID</label>
+          <label htmlFor="user-email">Email</label>
           <br />
-          <Input name="user=id" value={id} required onChange={onChangeId} />
+          <Input name="user=email" value={email} required onChange={onChangeEmail} />
         </div>
         <div>
-          <label htmlFor="user-id">Nickname</label>
+          <label htmlFor="user-email">Nickname</label>
           <br />
           <Input
             name="user=nick"
@@ -94,7 +103,7 @@ const Signup = () => {
           {termError && <ErrorMassage>You have to agree.</ErrorMassage>}
         </div>
         <div style={{ marginTop: 10 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={signUpLoading}>
             Singup
           </Button>
         </div>

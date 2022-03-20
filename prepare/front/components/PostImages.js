@@ -62,7 +62,7 @@ const PostImages = ({ images }) => {
         <div
           role="presentation"
           style={{
-            display: 'inlin-block',
+            display: 'inline-block',
             width: '50%',
             textAlign: 'center',
             verticalAlign: 'middle',
